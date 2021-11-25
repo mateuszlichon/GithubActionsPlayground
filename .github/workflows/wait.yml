@@ -27,6 +27,11 @@ jobs:
         run: |
           echo Hooray,
           echo I waited.
+          
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
       - name: Runs script
         uses: zendesk/github-script@v4
