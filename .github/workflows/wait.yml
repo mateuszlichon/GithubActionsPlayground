@@ -45,15 +45,27 @@ jobs:
             const gitBranch = '${{ github.event.workflow_run.head_branch }}'
             console.log('gitbranch', gitBranch)
             
-            const {data} = await github.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'ci.yml',
-              branch: gitBranch,
-            })
+            async function getWorkflowStatus(workflow) {
+              const {data} = await github.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: workflow,
+                branch: gitBranch,
+              })
+
+              // console.log('workflow_runs', data.workflow_runs)
+
+              const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.GIT_SHA }}')
+
+              // console.log('runsOnSameSha', runsOnSameSha)
+
+              // console.log('outcome', runsOnSameSha[0].conclusion)
+              
+              return runsOnSameSha[0].conclusion
+            }
             
-            // console.log('workflow_runs', data.workflow_runs)
-                        
-            const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.GIT_SHA }}')
+            const ciStatus = await getWorkflowStatus('ci.yml')
             
-            console.log('runsOnSameSha', runsOnSameSha)
+            console.log('ciStatus', ciStatus)
+            
+            
