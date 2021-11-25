@@ -42,12 +42,16 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             console.log('tra la la')
+            console.log('${{ env.GIT_BRANCH }}', ${{ env.GIT_BRANCH }})
             
-            const ciTestsWorkflowRunsResponse = await github.actions.listWorkflowRuns({
+            const {data} = await github.actions.listWorkflowRuns({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'ci.yml',
             })
             
-            console.log('ciTestsWorkflowRunsResponse', ciTestsWorkflowRunsResponse)
-          
+            console.log('data', data)
+            
+            const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === ${{ env.GIT_SHA }})
+            
+            console.log('runsOnSameSha', runsOnSameSha)
