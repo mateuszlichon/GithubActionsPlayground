@@ -66,6 +66,6 @@ jobs:
             
             const ciStatus = await getWorkflowStatus('ci.yml')
             
-            console.log('ciStatus', ciStatus)
+            console.log('ciStatus1', ciStatus)
             
             
