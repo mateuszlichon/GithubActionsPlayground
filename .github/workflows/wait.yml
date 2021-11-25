@@ -35,7 +35,7 @@ jobs:
 
       - name: Runs script
         env: 
-          GIT_SHA: ${{ github.sha }}
+          GIT_SHA: ${{ github.workflow_run.id }}
 #           GIT_BRANCH: ${{ github.event.workflow_run.head_branch }}
         uses: actions/github-script@v4
         with:
