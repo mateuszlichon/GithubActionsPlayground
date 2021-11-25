@@ -59,7 +59,7 @@ jobs:
 
               // console.log('runsOnSameSha', runsOnSameSha)
 
-              console.log('reverse date sort', data.workflow_runs.sort((a, b) => b.run_number) - a.run_number))
+              console.log('reverse date sort', data.workflow_runs.sort((a, b) => b.run_number - a.run_number))
               
               return runsOnSameSha[0].conclusion
             }
