@@ -53,6 +53,8 @@ jobs:
                 branch: gitBranch,
               })
               
+              console.log('SHA', '${{ env.GIT_SHA }}')
+              
               console.log('data', data)
 
               const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.GIT_SHA }}')
