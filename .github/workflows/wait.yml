@@ -37,7 +37,7 @@ jobs:
         env: 
           GIT_SHA: ${{ github.sha }}
           GIT_BRANCH: ${{ github.workflow_run.head_branch }}
-        uses: zendesk/github-script@v4
+        uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
