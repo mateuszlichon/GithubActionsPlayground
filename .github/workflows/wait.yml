@@ -50,8 +50,10 @@ jobs:
               workflow_id: 'ci.yml',
             })
             
-            console.log('data', data)
+            console.log('workflow_runs', workflow_runs)
             
-            const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === ${{ env.GIT_SHA }})
+            const gitSha = ${{ env.GIT_SHA }}
+            
+            const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === gitSha)
             
             console.log('runsOnSameSha', runsOnSameSha)
