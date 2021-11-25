@@ -34,9 +34,21 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
 
       - name: Runs script
+        env: 
+          GIT_SHA: ${{ github.sha }}
+          GIT_BRANCH: ${{ github.workflow_run.head_branch }}
         uses: zendesk/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             console.log('tra la la')
+            
+            const ciTestsWorkflowRunsResponse = await github.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'ci.yml',
+              branch: ${{ env.GIT_BRANCH }}',
+            })
+            
+            console.log('ciTestsWorkflowRunsResponse', ciTestsWorkflowRunsResponse)
           
