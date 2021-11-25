@@ -42,15 +42,17 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             console.log('tra la la')
-            console.log('gitbranch', '${{ github.event.workflow_run.head_branch }}')
+            const gitBranch = '${{ github.event.workflow_run.head_branch }}'
+            console.log('gitbranch', gitBranch)
             
             const {data} = await github.actions.listWorkflowRuns({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'ci.yml',
+              branch: gitBranch,
             })
             
-            console.log('workflow_runs', data.workflow_runs)
+            // console.log('workflow_runs', data.workflow_runs)
                         
             const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.GIT_SHA }}')
             
