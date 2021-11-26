@@ -42,7 +42,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log('tra la la')
+            console.log(github.event)
             
             const workflowsToConfirmMap = {
               15644088: 'CI name TEST',
@@ -69,8 +69,8 @@ jobs:
               console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
               console.log('EVENT_WORKFLOW_BRANCH', '${{ env.EVENT_WORKFLOW_BRANCH }}')
               let workflowStatus
-              console.log('checking if same run', workflowId === '${{ env.EVENT_WORKFLOW_ID }}')
-              if (workflowId === '${{ env.EVENT_WORKFLOW_ID }}') {
+              console.log('checking if same run', workflowId === '${{ env.EVENT_WORKFLOW_BRANCH }}')
+              if (workflowId === '${{ env.EVENT_WORKFLOW_BRANCH }}') {
                 console.log('GETTING SAME RUN')
                 workflowStatus = github.event.workflow_run.conclusion
               } else {
