@@ -63,9 +63,9 @@ jobs:
               return sortedRuns[0].conclusion
             }
             
-            // const ciStatus = await fetchWorkflowStatus('ci.yml')
+            const ciStatus = await fetchWorkflowStatus(Object.keys(workflowsToConfirmMap)[0])
             
-            const allWorkflowsStatus = Object.keys(workflowsToConfirmMap).reduce((prev, next) => prev && await fetchWorkflowStatus(next), true)
+            // const allWorkflowsStatus = Object.keys(workflowsToConfirmMap).reduce((prev, next) => prev && await fetchWorkflowStatus(next), true)
             
             console.log('allWorkflowsStatus', allWorkflowsStatus)
             
