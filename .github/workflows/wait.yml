@@ -38,6 +38,7 @@ jobs:
           EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
           EVENT_WORKFLOW_NAME: ${{ github.event.workflow.name }}
+          EVENT_WORKFLOW_STATE: ${{ github.event.workflow.state }}
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -47,7 +48,7 @@ jobs:
             }
             
             async function fetchWorkflowStatus(workflowId) {
-              console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
+              console.log(`Fetching ${workflowsToConfirmMap[workflowId]} status`)
               
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
@@ -60,17 +61,20 @@ jobs:
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
               const workflowStatus = sortedRuns[0].conclusion
               
-              console.log(`${workflowsToConfirmMap[workflowId]} status is ${workflowStatus}`)
-              
               return workflowStatus
             }
             
-            async function isAllWorkflowsSuccess(workflowsIdsArray) {
-              return await workflowsIdsArray.reduce(async (prev, next) => prev && (await fetchWorkflowStatus(next) === 'success'), true)
+            async function getWorkflowStatus(workflowId) {
+              console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
+              const workflowStatus = workflowsToConfirmMap[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}' ? '${{ env.EVENT_WORKFLOW_STATE }}' : await fetchWorkflowStatus(workflowId)
+              console.log(`${workflowsToConfirmMap[workflowId]} status is ${workflowStatus}`)
+              return workflowStatus
             }
-            
-            console.log('workflow', '${{ env.EVENT_WORKFLOW_NAME }}')
-                        
+
+            async function isAllWorkflowsSuccess(workflowsIdsArray) {
+              return await workflowsIdsArray.reduce(async (prev, next) => prev && (await getWorkflowStatus(next) === 'success'), true)
+            }
+                                    
             if (await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))) {
               console.log('All workflows good to go. Checking if master...') 
             }
