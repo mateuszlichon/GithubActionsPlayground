@@ -38,11 +38,12 @@ jobs:
           EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
           EVENT_WORKFLOW_ID: ${{ github.event.workflow.id }}
+          EVENT: ${{ github.event }}
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(github.event)
+            console.log('EVENT', '${{ env.EVENT }}')
             
             const workflowsToConfirmMap = {
               15644088: 'CI name TEST',
