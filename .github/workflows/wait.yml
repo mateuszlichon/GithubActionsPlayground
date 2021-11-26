@@ -35,8 +35,8 @@ jobs:
 
       - name: Runs script
         env: 
-          GIT_SHA: ${{ github.event.workflow_run.head_sha }}
-          GIT_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
+          EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -48,16 +48,16 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 workflow_id: workflow,
-                branch: '${{ env.GIT_BRANCH }}',
+                branch: '${{ env.EVENT_WORKFLOW_BRANCH }}',
               })
               
-              console.log('SHA', '${{ env.GIT_SHA }}')
+              console.log('SHA', '${{ env.EVENT_WORKFLOW_SHA }}')
               
-              console.log('GIT_BRANCH', '${{ env.GIT_BRANCH }}')
+              console.log('EVENT_WORKFLOW_BRANCH', '${{ env.EVENT_WORKFLOW_BRANCH }}')
               
               console.log('data', data)
 
-              const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.GIT_SHA }}')
+              const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}')
               
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
 
