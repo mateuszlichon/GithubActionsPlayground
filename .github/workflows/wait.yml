@@ -37,8 +37,6 @@ jobs:
         env: 
           EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
-          EVENT_WORKFLOW_ID: ${{ github.event.workflow.id }}
-          EVENT: ${{ github }}
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -65,25 +63,9 @@ jobs:
               console.log('FETCHING FINISHED')
               return sortedRuns[0].conclusion
             }
-                        
-            async function getWorkflowStatus(workflowId) {
-              console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
-              console.log('EVENT_WORKFLOW_BRANCH', '${{ env.EVENT_WORKFLOW_BRANCH }}')
-              let workflowStatus
-              console.log('checking if same run', workflowId === '${{ env.EVENT_WORKFLOW_BRANCH }}')
-              if (workflowId === '${{ env.EVENT_WORKFLOW_BRANCH }}') {
-                console.log('GETTING SAME RUN')
-                workflowStatus = github.event.workflow_run.conclusion
-              } else {
-                console.log('FETCHING RUN')
-                workflowStatus = await fetchWorkflowStatus(workflowId)
-              }
-              console.log(`${workflowsToConfirmMap[workflowId]} status is ${workflowStatus}`)
-              return workflowStatus
-            }
             
             async function isAllWorkflowsSuccess(workflowsIdsArray) {
-              workflowsIdsArray.reduce(async (prev, next) => prev && (await getWorkflowStatus(next) === 'success'), true)
+              workflowsIdsArray.reduce(async (prev, next) => prev && (await fetchWorkflowStatus(next) === 'success'), true)
             }
             
             const allWorkflowsStatus = await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))
