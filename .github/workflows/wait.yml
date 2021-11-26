@@ -43,31 +43,30 @@ jobs:
           script: |
             console.log('tra la la')
             
-            async function getWorkflowStatus(workflow) {
+            const workflowsToConfirmMap = {
+              15644088: 'CI name TEST',
+            }
+            
+            async function fetchtWorkflowStatus(workflowId) {
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                workflow_id: workflow,
+                workflow_id: workflowId,
                 branch: '${{ env.EVENT_WORKFLOW_BRANCH }}',
               })
               
-              console.log('SHA', '${{ env.EVENT_WORKFLOW_SHA }}')
-              
-              console.log('EVENT_WORKFLOW_BRANCH', '${{ env.EVENT_WORKFLOW_BRANCH }}')
-              
-              console.log('data', data)
 
               const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}')
               
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
-
-              console.log('sortedRuns[0]', sortedRuns[0])
               
               return sortedRuns[0].conclusion
             }
             
-            const ciStatus = await getWorkflowStatus('ci.yml')
+            // const ciStatus = await fetchWorkflowStatus('ci.yml')
             
-            console.log('ciStatus', ciStatus)
+            const allWorkflowsStatus = Object.keys(workflowsToConfirmMap).reduce((prev, next) => prev && await fetchWorkflowStatus(next), true)
+            
+            console.log('allWorkflowsStatus', allWorkflowsStatus)
             
             
