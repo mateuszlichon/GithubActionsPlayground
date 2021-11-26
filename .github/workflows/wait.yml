@@ -37,6 +37,7 @@ jobs:
         env: 
           EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          EVENT_WORKFLOW: ${{ github.event.workflow }}
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
