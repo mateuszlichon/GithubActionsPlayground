@@ -41,13 +41,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log('EVENT', '${{ env.EVENT }}')
-            
             const workflowsToConfirmMap = {
               15644088: 'CI name TEST',
             }
             
             async function fetchWorkflowStatus(workflowId) {
+              console.log(`FETCHING ${workflowsToConfirmMap[workflowId]}`)
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
