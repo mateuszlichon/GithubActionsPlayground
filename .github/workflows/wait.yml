@@ -37,7 +37,7 @@ jobs:
         env: 
           EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
-          EVENT_WORKFLOW: ${{ github.event.workflow }}
+          EVENT_WORKFLOW_NAME: ${{ github.event.workflow.name }}
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -68,6 +68,8 @@ jobs:
             async function isAllWorkflowsSuccess(workflowsIdsArray) {
               return await workflowsIdsArray.reduce(async (prev, next) => prev && (await fetchWorkflowStatus(next) === 'success'), true)
             }
+            
+            // console.log('workflow', )
                         
             if (await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))) {
               console.log('All workflows good to go. Checking if master...') 
