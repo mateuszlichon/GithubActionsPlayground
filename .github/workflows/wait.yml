@@ -44,7 +44,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const workflowsToConfirmMap = {
-              15644088: 'CI',
+              'ci.yml': 'CI',
             }
             
             async function fetchWorkflowStatus(workflowId) {
