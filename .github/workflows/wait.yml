@@ -67,7 +67,11 @@ jobs:
             // const ciStatus = await fetchWorkflowStatus(Object.keys(workflowsToConfirmMap)[0])
             
             async function getWorkflowStatus(workflowId) {
-              return workflowId === '${{ env.EVENT_WORKFLOW_BRANCH }}' ? github.event.workflow_run.conclusion : fetchWorkflowStatus(workflowId)
+              console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
+              console.log('EVENT_WORKFLOW_BRANCH', '${{ env.EVENT_WORKFLOW_BRANCH }}')
+              const workflowStatus = workflowId === '${{ env.EVENT_WORKFLOW_BRANCH }}' ? github.event.workflow_run.conclusion : await fetchWorkflowStatus(workflowId)
+              console.log(`${workflowsToConfirmMap[workflowId]} status` is `${workflowStatus}`)
+              return workflowStatus
             }
             
             async function isAllWorkflowsSuccess(workflowsIdsArray) {
