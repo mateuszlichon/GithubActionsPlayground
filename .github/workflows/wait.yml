@@ -47,7 +47,7 @@ jobs:
               15644088: 'CI name TEST',
             }
             
-            async function fetchtWorkflowStatus(workflowId) {
+            async function fetchWorkflowStatus(workflowId) {
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
