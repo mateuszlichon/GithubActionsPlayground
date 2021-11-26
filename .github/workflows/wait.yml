@@ -42,15 +42,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             console.log('tra la la')
-            const gitBranch = '${{ github.event.workflow_run.head_branch }}'
-            console.log('gitbranch', gitBranch)
             
             async function getWorkflowStatus(workflow) {
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 workflow_id: workflow,
-                branch: gitBranch,
+                branch: '${{ env.GIT_BRANCH }}',
               })
               
               console.log('SHA', '${{ env.GIT_SHA }}')
