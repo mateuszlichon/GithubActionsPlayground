@@ -65,7 +65,11 @@ jobs:
             
             // const ciStatus = await fetchWorkflowStatus(Object.keys(workflowsToConfirmMap)[0])
             
-            const allWorkflowsStatus = await Object.keys(workflowsToConfirmMap).reduce(async (prev, next) => prev && (await fetchWorkflowStatus(next)), true)
+            async function isAllWorkflowsSuccess(workflowsIdsArray) {
+              workflowsIdsArray.reduce(async (prev, next) => prev && (await fetchWorkflowStatus(next)), true)
+            }
+            
+            const allWorkflowsStatus = await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))
             
             console.log('allWorkflowsStatusSuccess', allWorkflowsStatus)
             
