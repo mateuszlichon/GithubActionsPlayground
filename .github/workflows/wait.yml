@@ -49,6 +49,7 @@ jobs:
             }
             
             async function fetchWorkflowStatus(workflowId) {
+              console.log('FETCHING RUN')
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -63,14 +64,14 @@ jobs:
               
               return sortedRuns[0].conclusion
             }
-            
-            // const ciStatus = await fetchWorkflowStatus(Object.keys(workflowsToConfirmMap)[0])
-            
+                        
             async function getWorkflowStatus(workflowId) {
               console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
               console.log('EVENT_WORKFLOW_BRANCH', '${{ env.EVENT_WORKFLOW_BRANCH }}')
               let workflowStatus
-              if (workflowId === '${{ env.EVENT_WORKFLOW_BRANCH }}') {
+              console.log('checking if same run', workflowId === github.event.workflow.id)
+              if (workflowId === github.event.workflow.id) {
+                console.log('GETTING SAME RUN')
                 workflowStatus = github.event.workflow_run.conclusion
               } else {
                 workflowStatus = await fetchWorkflowStatus(workflowId)
