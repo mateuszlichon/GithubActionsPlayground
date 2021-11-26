@@ -69,7 +69,7 @@ jobs:
               return await workflowsIdsArray.reduce(async (prev, next) => prev && (await fetchWorkflowStatus(next) === 'success'), true)
             }
             
-            // console.log('workflow', )
+            console.log('workflow', '${{ env.EVENT_WORKFLOW_NAME }}')
                         
             if (await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))) {
               console.log('All workflows good to go. Checking if master...') 
