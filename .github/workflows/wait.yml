@@ -46,7 +46,7 @@ jobs:
             }
             
             async function fetchWorkflowStatus(workflowId) {
-              console.log(`FETCHING ${workflowsToConfirmMap[workflowId]}`)
+              console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -59,8 +59,11 @@ jobs:
               
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
               
-              console.log('FETCHING FINISHED')
-              return sortedRuns[0].conclusion
+              const workflowStatus = sortedRuns[0].conclusion
+              
+              console.log(`${workflowsToConfirmMap[workflowId]} status is ${workflowStatus}`)
+              
+              return workflowStatus
             }
             
             async function isAllWorkflowsSuccess(workflowsIdsArray) {
@@ -69,6 +72,8 @@ jobs:
             
             const allWorkflowsStatus = await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))
             
-            console.log('allWorkflowsStatusSuccess', allWorkflowsStatus)
+            if (allWorkflowsStatus) {
+              console.log('All workflows good to go. Checking if master...') 
+            }
             
             
