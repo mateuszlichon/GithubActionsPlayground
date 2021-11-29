@@ -75,7 +75,7 @@ jobs:
 
             async function isAllWorkflowsSuccess(workflowsIdsArray) {
               const statusObject = {}
-              workflowsIdsArray.forEach(async(workflowId) => statusObject[workflowId] = await getWorkflowStatus(workflowId))
+              await workflowsIdsArray.forEach(async(workflowId) => statusObject[workflowId] = await getWorkflowStatus(workflowId))
               return statusObject
             }
             
