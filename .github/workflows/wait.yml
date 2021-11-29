@@ -72,12 +72,12 @@ jobs:
             }
 
             async function isAllWorkflowsSuccess(workflowsIdsArray) {
-              return await workflowsIdsArray.reduce(async (prev, next) => await prev.push(getWorkflowStatus(next), []))
+              return await workflowsIdsArray.reduce(async (prev, next) => await prev.concat(getWorkflowStatus(next), []))
             }
             
             const allStatuses = await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))
             
-            console.log(isAllWorkflowsSuccess, allStatuses)
+            console.log('isAllWorkflowsSuccess', allStatuses)
                                     
             // if (await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))) {
             //   console.log('All workflows good to go. Checking if master...') 
