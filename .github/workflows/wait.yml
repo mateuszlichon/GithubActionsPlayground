@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: 
       - CI
-#       - 'CI dispatch'
+      - 'CI dispatch'
     types:
       - completed
 
@@ -61,7 +61,7 @@ jobs:
 
               const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}')
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
-              const workflowStatus = sortedRuns[0]?.conclusion
+              const workflowStatus = sortedRuns[0] ? sortedRuns[0].conclusion : 'Workflow not found'
               
               return workflowStatus
             }
