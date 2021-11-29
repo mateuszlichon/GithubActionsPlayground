@@ -78,7 +78,7 @@ jobs:
               workflowsIdsArray.forEach(async (element) => {
                 statusObject[element] = await getWorkflowStatus(element);
               });
-              console.log('statusObject', statusObject)
+              console.log('statusObject', await statusObject)
               return await statusObject;
             }
 
