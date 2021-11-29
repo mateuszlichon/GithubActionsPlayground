@@ -78,9 +78,5 @@ jobs:
             const allStatuses = await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))
             
             console.log('isAllWorkflowsSuccess', allStatuses)
-                                    
-            // if (await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))) {
-            //   console.log('All workflows good to go. Checking if master...') 
-            // }
             
             
