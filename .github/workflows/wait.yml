@@ -74,7 +74,9 @@ jobs:
             }
 
             async function isAllWorkflowsSuccess(workflowsIdsArray) {
-              return await workflowsIdsArray.reduce(async (prev, next) => prev.concat([await getWorkflowStatus(next)]), [])
+              const statusObject = {}
+              workflowsIdsArray.forEach(async(workflowId) => statusObject[workflowId] = await getWorkflowStatus(workflowId))
+              return statusObject
             }
             
             const allStatuses = await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))
