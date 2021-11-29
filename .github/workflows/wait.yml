@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: 
       - CI
+      - 'CI dispatch'
     types:
       - completed
 
@@ -45,6 +46,7 @@ jobs:
           script: |
             const workflowsToConfirmMap = {
               'ci.yml': 'CI',
+              'dispatch.yml': 'CI dispatch',
             }
             
             async function fetchWorkflowStatus(workflowId) {
