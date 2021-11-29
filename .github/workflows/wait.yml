@@ -79,6 +79,6 @@ jobs:
             
             const allStatuses = await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))
             
-            console.log('isAllWorkflowsSuccess', allStatuses)
+            console.log('isAllWorkflowsSuccess ', allStatuses)
             
             
