@@ -86,12 +86,16 @@ jobs:
               workflowIds
             );
 
-            if (
-              Object.values(requiredWorkflowsConclusions).reduce(
+            const isAllWorkflowsSuccess = Object.values(requiredWorkflowsConclusions).reduce(
                 (prev, next) => prev && next === "success",
                 true
               )
-            ) {
+              
+            console.log('requiredWorkflowsConclusions', requiredWorkflowsConclusions)
+            console.log('isAllWorkflowsSuccess', isAllWorkflowsSuccess)
+
+            
+            if (isAllWorkflowsSuccess) {
               console.log("hooray");
             } else {
               console.log("Not all workflows ready:");
