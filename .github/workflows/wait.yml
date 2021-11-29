@@ -38,7 +38,7 @@ jobs:
           EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
           EVENT_WORKFLOW_NAME: ${{ github.event.workflow.name }}
-          EVENT_WORKFLOW_STATE: ${{ github.event.workflow.state }}
+          EVENT_WORKFLOW_CONCLUSION: ${{ github.event.workflow.conclusion }}
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -66,7 +66,7 @@ jobs:
             
             async function getWorkflowStatus(workflowId) {
               console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
-              const workflowStatus = workflowsToConfirmMap[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}' ? '${{ env.EVENT_WORKFLOW_STATE }}' : await fetchWorkflowStatus(workflowId)
+              const workflowStatus = workflowsToConfirmMap[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}' ? '${{ env.EVENT_WORKFLOW_CONCLUSION }}' : await fetchWorkflowStatus(workflowId)
               console.log(`${workflowsToConfirmMap[workflowId]} status is ${workflowStatus}`)
               return workflowStatus
             }
