@@ -68,17 +68,18 @@ jobs:
             
             async function getWorkflowStatus(workflowId) {
               console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`)
-              const workflowStatus = await fetchWorkflowStatus(workflowId)
+              const workflowStatus = workflowsToConfirmMap[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}' ? '${{ env.EVENT_WORKFLOW_CONCLUSION }}' : await fetchWorkflowStatus(workflowId)
               console.log(`${workflowsToConfirmMap[workflowId]} status is ${workflowStatus}`)
               return workflowStatus
             }
 
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
               const statusObject = {};
-              await workflowsIdsArray.forEach(async (element) => {
+              workflowsIdsArray.forEach(async (element) => {
                 statusObject[element] = await getWorkflowStatus(element);
               });
-              return statusObject;
+              console.log('statusObject', statusObject)
+              return await statusObject;
             }
 
             const workflowIds = Object.keys(workflowsToConfirmMap);
