@@ -74,13 +74,13 @@ jobs:
               );
               return workflowStatus;
             }
+            
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
               const statusArray = workflowsIdsArray.map(
                 async (workflowId) => {
                   return {[workflowId]: await getWorkflowStatus(workflowId)}
                 }
               );
-              console.log("statusArray", await Promise.all(statusArray));
               return await (await Promise.all(statusArray)).reduce((prev, next) => {return {...prev, ...next}}, {});
             }
             const workflowIds = Object.keys(workflowsToConfirmMap);
@@ -90,9 +90,6 @@ jobs:
             const isAllWorkflowsSuccess = Object.values(
               requiredWorkflowsConclusions
             ).reduce((prev, next) => prev && next === "success", true);
-
-            console.log("requiredWorkflowsConclusions", requiredWorkflowsConclusions);
-            console.log("isAllWorkflowsSuccess", isAllWorkflowsSuccess);
 
             if (isAllWorkflowsSuccess) {
               console.log("hooray");
