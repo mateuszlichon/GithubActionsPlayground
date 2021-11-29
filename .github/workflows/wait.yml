@@ -73,12 +73,33 @@ jobs:
               return workflowStatus
             }
 
-            async function isAllWorkflowsSuccess(workflowsIdsArray) {
-              return await workflowsIdsArray.reduce(async (prev, next) => prev.concat([{status: await getWorkflowStatus(next)}]), [])
+            async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
+              const statusObject = {};
+              await workflowsIdsArray.forEach(async (element) => {
+                statusObject[element] = await getWorkflowStatus(element);
+              });
+              return statusObject;
             }
-            
-            const allStatuses = await isAllWorkflowsSuccess(Object.keys(workflowsToConfirmMap))
-            
-            console.log('isAllWorkflowsSuccess ', allStatuses)
+
+            const workflowIds = Object.keys(workflowsToConfirmMap);
+            const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
+              workflowIds
+            );
+
+            if (
+              Object.values(requiredWorkflowsConclusions).reduce(
+                (prev, next) => prev && next === "success",
+                true
+              )
+            ) {
+              console.log("hooray");
+            } else {
+              console.log("Not all workflows ready:");
+              workflowIds.forEach((workflowId) => {
+                console.log(
+                  `${workflowsToConfirmMap[workflowId]} status is ${requiredWorkflowsConclusions[workflowId]}`
+                );
+              });
+            }
             
             
