@@ -76,7 +76,7 @@ jobs:
 
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
               const statusObject = {};
-              workflowsIdsArray.forEach(async (element) => {
+              await workflowsIdsArray.forEach(async (element) => {
                 statusObject[element] = await getWorkflowStatus(element);
               });
               console.log('statusObject', await statusObject)
