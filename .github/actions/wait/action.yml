@@ -16,6 +16,10 @@ runs:
               'dispatch.yml': 'CI dispatch',
             }
             
+            console.log('EVENT_WORKFLOW_SHA', '${{ github.event.workflow_run.head_sha }}')
+            console.log('EVENT_WORKFLOW_BRANCH', '${{ github.event.workflow_run.head_branch }}')
+            console.log('EVENT_WORKFLOW_CONCLUSION', '${{ github.event.workflow_run.conclusion }}')
+            
             async function fetchWorkflowConclusion(workflowId) {
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
