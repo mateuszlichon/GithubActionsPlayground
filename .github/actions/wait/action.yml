@@ -12,10 +12,10 @@ runs:
         with:
           script: |
             const WORKFLOWS_TO_CONFIRM_MAP = {
-              'ci-linters.yml': 'CI / Linters',
-              'ci-tests.yml': 'CI / Tests',
-              'cd-deploy-sha-staging.yml': 'CD / Deploy SHA (Staging)',
+              'ci.yml': 'CI',
+              'dispatch.yml': 'CI dispatch',
             }
+            
             async function fetchWorkflowConclusion(workflowId) {
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
