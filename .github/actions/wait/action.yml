@@ -9,7 +9,6 @@ runs:
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
           EVENT_WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
           EVENT_WORKFLOW_NAME: ${{ github.workflow }}
-          WORKFLOWS_TO_CONFIRM: ${{ workflows-to-confirm }}
         uses: actions/github-script@v4
         with:
           script: |
@@ -18,8 +17,34 @@ runs:
               'dispatch.yml': 'CI dispatch',
             }
             
-            console.log('WORKFLOWS_TO_CONFIRM', '${{ env.WORKFLOWS_TO_CONFIRM }}')
-            console.log('workflows-to-confirm', '${{ workflows-to-confirm }}')
+            const workflowIds = Object.keys(WORKFLOWS_TO_CONFIRM_MAP);
+            
+            const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
+              workflowIds
+            );
+            
+            const isAllWorkflowsSuccess = Object.values(
+              requiredWorkflowsConclusions
+            ).reduce((prev, next) => prev && next.conclusion === "success", true);
+            if (isAllWorkflowsSuccess) {
+              console.log("All workflows successful");
+              console.log("Moving on to check if master...");
+            } else {
+              console.log("Not all workflows ready:");
+              workflowIds.forEach((workflowId) => {
+                if (!requiredWorkflowsConclusions[workflowId].status) {
+                  console.log(
+                    `No ${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} workflow matching criteria of branch and SHA`
+                  );
+                } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
+                  console.log(
+                    `${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
+                  );
+                }
+              });
+            }
+            
+            ///// Functions implementation
             
             async function fetchWorkflowConclusion(workflowId) {
               const {data} = await github.actions.listWorkflowRuns({
@@ -47,28 +72,4 @@ runs:
                 }
               );
               return await (await Promise.all(conclusionsArray)).reduce((prev, next) => {return {...prev, ...next}}, {});
-            }
-            const workflowIds = Object.keys(WORKFLOWS_TO_CONFIRM_MAP);
-            const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
-              workflowIds
-            );
-            const isAllWorkflowsSuccess = Object.values(
-              requiredWorkflowsConclusions
-            ).reduce((prev, next) => prev && next.conclusion === "success", true);
-            if (isAllWorkflowsSuccess) {
-              console.log("All workflows successful");
-              console.log("Moving on to check if master...");
-            } else {
-              console.log("Not all workflows ready:");
-              workflowIds.forEach((workflowId) => {
-                if (!requiredWorkflowsConclusions[workflowId].status) {
-                  console.log(
-                    `No ${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} workflow matching criteria of branch and SHA`
-                  );
-                } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
-                  console.log(
-                    `${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
-                  );
-                }
-              });
             }
