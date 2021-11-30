@@ -7,6 +7,9 @@ inputs:
   sha:
     description: 'SHA on which we check the workflow'
     required: true
+  workflows:
+    description: 'Workflows'
+    required: true
 runs:
   using: "composite"
   steps:
