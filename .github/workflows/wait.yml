@@ -64,8 +64,11 @@ jobs:
             }
 
             async function getWorkflowConclusion(workflowId) {
-              const workflowStatus = WORKFLOWS_TO_CONFIRM_MAP[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}' ? {conclusion: '${{ env.EVENT_WORKFLOW_CONCLUSION }}'} : await fetchWorkflowConclusion(workflowId)
-              return workflowStatus;
+              const workflowStatus =
+                WORKFLOWS_TO_CONFIRM_MAP[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}'
+                  ? {conclusion: '${{ env.EVENT_WORKFLOW_CONCLUSION }}'}
+                  : await fetchWorkflowConclusion(workflowId)
+              return workflowStatus
             }
 
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
