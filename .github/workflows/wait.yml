@@ -55,25 +55,20 @@ jobs:
                 workflow_id: workflowId,
                 branch: '${{ env.EVENT_WORKFLOW_BRANCH }}',
               })
-              console.log('data', data)
-              console.log('SHA', '${{ env.EVENT_WORKFLOW_SHA }}')
               const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
-              console.log('runsOnSameSha', runsOnSameSha)
-              // TODO switch to the one above
-              // const runsOnSameSha = data.workflow_runs.filter((run) => true) || []
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
               const workflowStatus = sortedRuns[0] ? {status: sortedRuns[0].status, conclusion: sortedRuns[0].conclusion} : {}
-
               return workflowStatus
             }
             
             async function getWorkflowConclusion(workflowId) {
-            const workflowStatus =
-              WORKFLOWS_TO_CONFIRM_MAP[workflowId] === "${{ env.EVENT_WORKFLOW_NAME }}"
-                ? { conclusion: "${{ env.EVENT_WORKFLOW_CONCLUSION }}" }
-                : await fetchWorkflowConclusion(workflowId)
-            return workflowStatus
-
+              const workflowStatus = 
+                WORKFLOWS_TO_CONFIRM_MAP[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}'
+                  ? {conclusion: '${{ env.EVENT_WORKFLOW_CONCLUSION }}'}
+                  : await fetchWorkflowConclusion(workflowId)
+              return workflowStatus
+            }
+            
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
               const conclusionsArray = workflowsIdsArray.map(
                 async (workflowId) => {
@@ -82,16 +77,13 @@ jobs:
               );
               return await (await Promise.all(conclusionsArray)).reduce((prev, next) => {return {...prev, ...next}}, {});
             }
-
-            const workflowIds = Object.keys(workflowsToConfirmMap);
+            const workflowIds = Object.keys(WORKFLOWS_TO_CONFIRM_MAP);
             const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
               workflowIds
             );
-
             const isAllWorkflowsSuccess = Object.values(
               requiredWorkflowsConclusions
             ).reduce((prev, next) => prev && next.conclusion === "success", true);
-
             if (isAllWorkflowsSuccess) {
               console.log("All workflows successful");
               console.log("Moving on to check if master...");
@@ -100,15 +92,13 @@ jobs:
               workflowIds.forEach((workflowId) => {
                 if (!requiredWorkflowsConclusions[workflowId].status) {
                   console.log(
-                    `No ${workflowsToConfirmMap[workflowId]} workflow matching criteria of branch and SHA`
+                    `No ${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} workflow matching criteria of branch and SHA`
                   );
                 } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
                   console.log(
-                    `${workflowsToConfirmMap[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status}
-                    with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
+                    `${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
                   );
                 }
               });
             }
-            
             
