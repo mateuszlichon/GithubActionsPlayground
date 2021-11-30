@@ -9,6 +9,7 @@ runs:
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
           EVENT_WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
           EVENT_WORKFLOW_NAME: ${{ github.workflow }}
+          WORKFLOWS_TO_CONFIRM: ${{ workflows-to-confirm }}
         uses: actions/github-script@v4
         with:
           script: |
@@ -17,10 +18,8 @@ runs:
               'dispatch.yml': 'CI dispatch',
             }
             
-            console.log('EVENT_WORKFLOW_SHA', '${{ env.EVENT_WORKFLOW_SHA }}')
-            console.log('EVENT_WORKFLOW_BRANCH', '${{ env.EVENT_WORKFLOW_BRANCH }}')
-            console.log('EVENT_WORKFLOW_CONCLUSION', '${{ env.EVENT_WORKFLOW_CONCLUSION }}')
-            console.log('EVENT_WORKFLOW_NAME', '${{ env.EVENT_WORKFLOW_NAME }}')
+            console.log('WORKFLOWS_TO_CONFIRM', '${{ env.WORKFLOWS_TO_CONFIRM }}')
+            console.log('workflows-to-confirm', '${{ workflows-to-confirm }}')
             
             async function fetchWorkflowConclusion(workflowId) {
               const {data} = await github.actions.listWorkflowRuns({
