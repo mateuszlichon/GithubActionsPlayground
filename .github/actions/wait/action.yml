@@ -8,7 +8,7 @@ runs:
           EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
           EVENT_WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-        uses: zendesk/github-script@v4
+        uses: actions/github-script@v4
         with:
           script: |
             const WORKFLOWS_TO_CONFIRM_MAP = {
