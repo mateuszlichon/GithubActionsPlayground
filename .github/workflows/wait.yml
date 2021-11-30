@@ -38,7 +38,6 @@ jobs:
         env: 
           EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
           EVENT_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
-          EVENT_WORKFLOW_NAME: ${{ github.event.workflow.name }}
           EVENT_WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         uses: actions/github-script@v4
         with:
@@ -49,56 +48,60 @@ jobs:
               'dispatch.yml': 'CI dispatch',
             }
             
-            async function fetchWorkflowStatus(workflowId) {
-              console.log(`Fetching ${workflowsToConfirmMap[workflowId]} status`)
-              
+            async function fetchWorkflowConclusion(workflowId) {
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 workflow_id: workflowId,
                 branch: '${{ env.EVENT_WORKFLOW_BRANCH }}',
               })
-
-              const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}')
+              const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
+              // TODO switch to the one above
+              // const runsOnSameSha = data.workflow_runs.filter((run) => true) || []
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
-              const workflowStatus = sortedRuns[0] ? sortedRuns[0].conclusion : 'Workflow not found'
-              
+              const workflowStatus = sortedRuns[0] ? {status: sortedRuns[0].status, conclusion: sortedRuns[0].conclusion} : {}
+
               return workflowStatus
             }
 
-            async function getWorkflowStatus(workflowId) {
-              console.log(`Checking ${workflowsToConfirmMap[workflowId]} status`);
-              const workflowStatus = workflowsToConfirmMap[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}' ? '${{ env.EVENT_WORKFLOW_CONCLUSION }}' : await fetchWorkflowStatus(workflowId)
-              console.log(
-                `${workflowsToConfirmMap[workflowId]} status is ${workflowStatus}`
-              );
+            async function getWorkflowConclusion(workflowId) {
+              const workflowStatus = workflowsToConfirmMap[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}' ? {conclusion: '${{ env.EVENT_WORKFLOW_CONCLUSION }}'} : await fetchWorkflowConclusion(workflowId)
               return workflowStatus;
             }
-            
+
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
-              const statusArray = workflowsIdsArray.map(
+              const conclusionsArray = workflowsIdsArray.map(
                 async (workflowId) => {
-                  return {[workflowId]: await getWorkflowStatus(workflowId)}
+                  return {[workflowId]: await getWorkflowConclusion(workflowId)}
                 }
               );
-              return await (await Promise.all(statusArray)).reduce((prev, next) => {return {...prev, ...next}}, {});
+              return await (await Promise.all(conclusionsArray)).reduce((prev, next) => {return {...prev, ...next}}, {});
             }
+
             const workflowIds = Object.keys(workflowsToConfirmMap);
             const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
               workflowIds
             );
+
             const isAllWorkflowsSuccess = Object.values(
               requiredWorkflowsConclusions
-            ).reduce((prev, next) => prev && next === "success", true);
+            ).reduce((prev, next) => prev && next.conclusion === "success", true);
 
             if (isAllWorkflowsSuccess) {
-              console.log("hooray");
+              console.log("All workflows successful");
+              console.log("Moving on to check if master...");
             } else {
               console.log("Not all workflows ready:");
               workflowIds.forEach((workflowId) => {
-                console.log(
-                  `${workflowsToConfirmMap[workflowId]} status is ${requiredWorkflowsConclusions[workflowId]}`
-                );
+                if (!requiredWorkflowsConclusions[workflowId].status) {
+                  console.log(
+                    `No ${workflowsToConfirmMap[workflowId]} workflow matching criteria of branch and SHA`
+                  );
+                } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
+                  console.log(
+                    `${workflowsToConfirmMap[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
+                  );
+                }
               });
             }
             
