@@ -43,7 +43,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const workflowsToConfirmMap = {
+            const WORKFLOWS_TO_CONFIRM_MAP = {
               'ci.yml': 'CI',
               'dispatch.yml': 'CI dispatch',
             }
