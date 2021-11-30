@@ -103,7 +103,8 @@ jobs:
                   );
                 } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
                   console.log(
-                    `${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
+                    `${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status}
+                      with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
                   );
                 }
               });
