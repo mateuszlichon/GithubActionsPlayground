@@ -58,6 +58,7 @@ jobs:
               console.log('data', data)
               console.log('SHA', '${{ env.EVENT_WORKFLOW_SHA }}')
               const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
+              console.log('runsOnSameSha', runsOnSameSha)
               // TODO switch to the one above
               // const runsOnSameSha = data.workflow_runs.filter((run) => true) || []
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
