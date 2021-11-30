@@ -11,6 +11,8 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  WORKFLOW_IDS: "ci.yml, dispatch.yml"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -39,4 +41,4 @@ jobs:
         with:
           branch: ${{ github.event.workflow_run.head_sha }}
           sha: ${{ github.event.workflow_run.head_branch }}
-          workflow_ids: "ci.yml, dispatch.yml"
+          workflow_ids: ${{ env.WORKFLOW_IDS }}
