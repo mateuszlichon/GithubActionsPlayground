@@ -10,7 +10,6 @@ runs:
           EVENT_WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         uses: zendesk/github-script@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const WORKFLOWS_TO_CONFIRM_MAP = {
               'ci-linters.yml': 'CI / Linters',
