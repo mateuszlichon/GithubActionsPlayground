@@ -98,10 +98,10 @@ jobs:
               console.log("Not all workflows ready:");
               workflowIds.forEach((workflowId) => {
                 if (!requiredWorkflowsConclusions[workflowId].status) {
-                  console.log(
-                    `No ${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} workflow matching criteria of branch and SHA`
-                  );
-                } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
+               //   console.log(
+               //     `No ${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} workflow matching criteria of branch and SHA`
+               //   );
+               // } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
                   console.log(
                     `${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status}
                       with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
