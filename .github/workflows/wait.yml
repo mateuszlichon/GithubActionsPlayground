@@ -55,6 +55,7 @@ jobs:
                 workflow_id: workflowId,
                 branch: '${{ env.EVENT_WORKFLOW_BRANCH }}',
               })
+              console.log('SHA', '${{ env.EVENT_WORKFLOW_SHA }}')
               const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
               // TODO switch to the one above
               // const runsOnSameSha = data.workflow_runs.filter((run) => true) || []
