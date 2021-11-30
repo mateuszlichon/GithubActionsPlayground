@@ -37,4 +37,6 @@ jobs:
       - name: Awaits
         uses: ./.github/actions/wait
         with:
-          workflows-to-confirm: 'ci.yml: CI, dispatch.yml: CI dispatch'
+          branch: ${{ github.event.workflow_run.head_sha }}
+          sha: ${{ github.event.workflow_run.head_branch }}
+          workflow_ids: 'ci.yml, dispatch.yml'
