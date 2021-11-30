@@ -71,7 +71,7 @@ jobs:
             const workflowStatus =
               WORKFLOWS_TO_CONFIRM_MAP[workflowId] === "${{ env.EVENT_WORKFLOW_NAME }}"
                 ? { conclusion: "${{ env.EVENT_WORKFLOW_CONCLUSION }}" }
-                : await fetchWorkflowConclusion(workflowId);
+                : await fetchWorkflowConclusion(workflowId)
             return workflowStatus
 
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
