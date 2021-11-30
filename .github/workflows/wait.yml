@@ -39,4 +39,4 @@ jobs:
         with:
           branch: ${{ github.event.workflow_run.head_sha }}
           sha: ${{ github.event.workflow_run.head_branch }}
-          workflow_ids: 'ci.yml, dispatch.yml'
+          workflow_ids: ${{ 'ci.yml, dispatch.yml' }}
