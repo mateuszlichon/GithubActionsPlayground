@@ -66,11 +66,13 @@ jobs:
 
               return workflowStatus
             }
-
+            
             async function getWorkflowConclusion(workflowId) {
-              const workflowStatus = workflowsToConfirmMap[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}' ? {conclusion: '${{ env.EVENT_WORKFLOW_CONCLUSION }}'} : await fetchWorkflowConclusion(workflowId)
-              return workflowStatus;
-            }
+            const workflowStatus =
+              WORKFLOWS_TO_CONFIRM_MAP[workflowId] === "${{ env.EVENT_WORKFLOW_NAME }}"
+                ? { conclusion: "${{ env.EVENT_WORKFLOW_CONCLUSION }}" }
+                : await fetchWorkflowConclusion(workflowId);
+            return workflowStatus
 
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
               const conclusionsArray = workflowsIdsArray.map(
@@ -102,7 +104,8 @@ jobs:
                   );
                 } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
                   console.log(
-                    `${workflowsToConfirmMap[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
+                    `${workflowsToConfirmMap[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status}
+                    with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
                   );
                 }
               });
