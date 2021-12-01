@@ -82,3 +82,6 @@ runs:
               );
               return await (await Promise.all(conclusionsArray)).reduce((prev, next) => {return {...prev, ...next}}, {});
             }
+            
+      - name: Get result
+        run: echo "${{steps.wait-outcome.outputs.result}}"
