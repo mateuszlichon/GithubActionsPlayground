@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  WORKFLOW_IDS: ci.yml, dispatch.yml
+  WORKFLOWS_IDS: ci.yml, dispatch.yml
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -41,4 +41,4 @@ jobs:
         with:
           branch: ${{ github.event.workflow_run.head_sha }}
           sha: ${{ github.event.workflow_run.head_branch }}
-          workflows: ${{ env.WORKFLOW_IDS }}
+          workflowsIds: ${{ env.WORKFLOWS_IDS }}
