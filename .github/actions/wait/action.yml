@@ -64,7 +64,7 @@ runs:
                 branch: '${{ env.EVENT_WORKFLOW_BRANCH }}',
               })
               
-              console.log('data, data)
+              console.log('data', data)
               
               // const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
               const runsOnSameSha = data.workflow_runs.filter((run) => true) || []
