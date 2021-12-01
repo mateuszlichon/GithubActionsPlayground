@@ -10,16 +10,22 @@ inputs:
   workflowsIds:
     description: 'Ids of workflows to check if successful'
     required: true
+outputs:
+  wait-result:
+    description: "Random number"
+    value: ${{ steps.wait-outcome.outputs.result }}
 runs:
   using: "composite"
   steps:
       - name: Check if all necesary workflows are successful
+        id: wait-outcome
         env:
           WORKFLOW_SHA: ${{ inputs.sha }}
           WORKFLOW_BRANCH: ${{ inputs.branch }}
           WORKFLOWS_IDS: ${{ inputs.workflowsIds }}
         uses: actions/github-script@v4
         with:
+          result-encoding: string
           script: |
             
             const workflowIds = '${{ env.WORKFLOWS_IDS }}'.split(', ')
@@ -34,6 +40,7 @@ runs:
             if (isAllWorkflowsSuccess) {
               console.log("All workflows successful");
               console.log("Moving on to check if master...");
+              return 'success'
             } else {
               console.log("Not all workflows ready:");
               workflowIds.forEach((workflowId) => {
@@ -47,6 +54,7 @@ runs:
                   );
                 }
               });
+              return 'not success'
             }
             
             ///// Functions implementation
