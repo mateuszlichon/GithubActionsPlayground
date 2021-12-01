@@ -7,8 +7,8 @@ inputs:
   sha:
     description: 'SHA on which we check the workflow'
     required: true
-  workflows:
-    description: 'Workflows to be checked'
+  workflow:
+    description: 'Workflows'
     required: true
 runs:
   using: "composite"
@@ -17,7 +17,7 @@ runs:
         env:
           WORKFLOW_SHA: ${{ inputs.sha }}
           WORKFLOW_BRANCH: ${{ inputs.branch }}
-          WORKFLOW_IDS: ${{ inputs.workflows }}
+          WORKFLOW_IDS: ${{ inputs.workflow }}
         uses: actions/github-script@v4
         with:
           script: |
