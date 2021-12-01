@@ -64,9 +64,10 @@ runs:
                 branch: '${{ env.EVENT_WORKFLOW_BRANCH }}',
               })
               
-              console.log('Data for: ' + workflowId + ' :' + data)
+              console.log('data, data)
               
-              const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
+              // const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
+              const runsOnSameSha = data.workflow_runs.filter((run) => true) || []
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
               const workflowStatus = sortedRuns[0] ? {status: sortedRuns[0].status, conclusion: sortedRuns[0].conclusion, name: sortedRuns[0].name} : {}
               return workflowStatus
