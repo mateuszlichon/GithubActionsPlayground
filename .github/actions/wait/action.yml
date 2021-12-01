@@ -8,7 +8,7 @@ inputs:
     description: 'SHA on which we check the workflow'
     required: true
   workflows:
-    description: 'Workflows'
+    description: 'Ids of workflows to check if successful'
     required: true
 runs:
   using: "composite"
