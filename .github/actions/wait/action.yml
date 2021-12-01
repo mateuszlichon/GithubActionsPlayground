@@ -10,6 +10,7 @@ inputs:
   workflows:
     description: 'Workflows'
     required: true
+    
 runs:
   using: "composite"
   steps:
