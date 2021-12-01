@@ -23,7 +23,7 @@ runs:
           WORKFLOW_SHA: ${{ inputs.sha }}
           WORKFLOW_BRANCH: ${{ inputs.branch }}
           WORKFLOWS_IDS: ${{ inputs.workflowsIds }}
-        uses: actions/github-script@v4
+        uses: actions/github-script@v5
         with:
           result-encoding: string
           script: |
