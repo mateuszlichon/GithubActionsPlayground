@@ -41,4 +41,4 @@ jobs:
         with:
           branch: ${{ github.event.workflow_run.head_sha }}
           sha: ${{ github.event.workflow_run.head_branch }}
-          workflows: ${{ env.WORKFLOW_IDS }}
+          workflowsIds: ${{ env.WORKFLOW_IDS }}
