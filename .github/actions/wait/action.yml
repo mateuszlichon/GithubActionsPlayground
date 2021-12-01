@@ -22,8 +22,6 @@ runs:
         with:
           script: |
             
-            console.log('WORKFLOW IDS', '${{ env.WORKFLOW_IDS }}')
-            
             const workflowIds = '${{ env.WORKFLOW_IDS }}'.split(', ')
             
             const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
@@ -55,16 +53,12 @@ runs:
             
             async function fetchWorkflowConclusion(workflowId) {
               
-              console.log('Fetching data for: ' + workflowId)
-              
               const {data} = await github.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 workflow_id: workflowId,
                 branch: '${{ env.EVENT_WORKFLOW_BRANCH }}',
               })
-              
-              console.log('data', data)
               
               // const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
               const runsOnSameSha = data.workflow_runs.filter((run) => true) || []
