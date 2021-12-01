@@ -66,10 +66,10 @@ runs:
               return workflowStatus
             }
 
-            async function fetchWorkflowConclusion(workflowsIdsArray) {
+            async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
               const conclusionsArray = workflowsIdsArray.map(
                 async (workflowId) => {
-                  return {[workflowId]: await getWorkflowConclusion(workflowId)}
+                  return {[workflowId]: await fetchWorkflowConclusion(workflowId)}
                 }
               );
               return await (await Promise.all(conclusionsArray)).reduce((prev, next) => {return {...prev, ...next}}, {});
