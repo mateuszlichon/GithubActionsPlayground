@@ -7,10 +7,9 @@ inputs:
   sha:
     description: 'SHA on which we check the workflow'
     required: true
-  workflows:
+  workflowsIds:
     description: 'Workflows'
     required: true
-    
 runs:
   using: "composite"
   steps:
@@ -18,7 +17,7 @@ runs:
         env:
           WORKFLOW_SHA: ${{ inputs.sha }}
           WORKFLOW_BRANCH: ${{ inputs.branch }}
-          WORKFLOW_IDS: ${{ inputs.workflows }}
+          WORKFLOW_IDS: ${{ inputs.workflowsIds }}
         uses: actions/github-script@v4
         with:
           script: |
@@ -67,7 +66,6 @@ runs:
               const workflowStatus = sortedRuns[0] ? {status: sortedRuns[0].status, conclusion: sortedRuns[0].conclusion, name: sortedRuns[0].name} : {}
               return workflowStatus
             }
-
             async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
               const conclusionsArray = workflowsIdsArray.map(
                 async (workflowId) => {
