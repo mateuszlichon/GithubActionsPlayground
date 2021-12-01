@@ -17,17 +17,14 @@ runs:
         env:
           WORKFLOW_SHA: ${{ inputs.sha }}
           WORKFLOW_BRANCH: ${{ inputs.branch }}
+          WORKFLOW_IDS: ${{ inputs.workflows }}
         uses: actions/github-script@v4
         with:
           script: |
-            const WORKFLOWS_TO_CONFIRM_MAP = {
-              'ci.yml': 'CI',
-              'dispatch.yml': 'CI dispatch',
-            }
             
             console.log('WORKFLOW IDS', '${{ env.WORKFLOW_IDS }}')
             
-            const workflowIds = Object.keys(WORKFLOWS_TO_CONFIRM_MAP);
+            const workflowIds = '${{ env.WORKFLOW_IDS }}'.split(', ')
             
             const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
               workflowIds
@@ -44,11 +41,11 @@ runs:
               workflowIds.forEach((workflowId) => {
                 if (!requiredWorkflowsConclusions[workflowId].status) {
                   console.log(
-                    `No ${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} workflow matching criteria of branch and SHA`
+                    `No workflow with id ${workflowId} matching criteria of branch and SHA`
                   );
                 } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
                   console.log(
-                    `${WORKFLOWS_TO_CONFIRM_MAP[workflowId]} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
+                    `${requiredWorkflowsConclusions[workflowId].name} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
                   );
                 }
               });
@@ -65,17 +62,11 @@ runs:
               })
               const runsOnSameSha = data.workflow_runs.filter((run) => run.head_sha === '${{ env.EVENT_WORKFLOW_SHA }}') || []
               const sortedRuns = runsOnSameSha.sort((a, b) => b.run_number - a.run_number)
-              const workflowStatus = sortedRuns[0] ? {status: sortedRuns[0].status, conclusion: sortedRuns[0].conclusion} : {}
+              const workflowStatus = sortedRuns[0] ? {status: sortedRuns[0].status, conclusion: sortedRuns[0].conclusion, name: sortedRuns[0].name} : {}
               return workflowStatus
             }
-            async function getWorkflowConclusion(workflowId) {
-              const workflowStatus =
-                WORKFLOWS_TO_CONFIRM_MAP[workflowId] === '${{ env.EVENT_WORKFLOW_NAME }}'
-                  ? {conclusion: '${{ env.EVENT_WORKFLOW_CONCLUSION }}'}
-                  : await fetchWorkflowConclusion(workflowId)
-              return workflowStatus
-            }
-            async function getRequiredWorkflowsConclusions(workflowsIdsArray) {
+
+            async function fetchWorkflowConclusion(workflowsIdsArray) {
               const conclusionsArray = workflowsIdsArray.map(
                 async (workflowId) => {
                   return {[workflowId]: await getWorkflowConclusion(workflowId)}
