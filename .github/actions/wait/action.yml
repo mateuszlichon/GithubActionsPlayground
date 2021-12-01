@@ -17,12 +17,12 @@ runs:
         env:
           WORKFLOW_SHA: ${{ inputs.sha }}
           WORKFLOW_BRANCH: ${{ inputs.branch }}
-          WORKFLOW_IDS: ${{ inputs.workflowsIds }}
+          WORKFLOWS_IDS: ${{ inputs.workflowsIds }}
         uses: actions/github-script@v4
         with:
           script: |
             
-            const workflowIds = '${{ env.WORKFLOW_IDS }}'.split(', ')
+            const workflowIds = '${{ env.WORKFLOWS_IDS }}'.split(', ')
             
             const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
               workflowIds
