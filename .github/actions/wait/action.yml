@@ -7,7 +7,7 @@ inputs:
   sha:
     description: 'SHA on which we check the workflow'
     required: true
-  workflowsids:
+  workflowsIds:
     description: 'Ids of workflows to check if successful'
     required: true
 runs:
@@ -17,7 +17,7 @@ runs:
         env:
           WORKFLOW_SHA: ${{ inputs.sha }}
           WORKFLOW_BRANCH: ${{ inputs.branch }}
-          WORKFLOW_IDS: ${{ inputs.workflowsids }}
+          WORKFLOW_IDS: ${{ inputs.workflowsIds }}
         uses: actions/github-script@v4
         with:
           script: |
