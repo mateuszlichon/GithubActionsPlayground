@@ -37,6 +37,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
 
       - name: Awaits
+        id: await-action
         uses: ./.github/actions/wait
         with:
           branch: ${{ github.event.workflow_run.head_sha }}
@@ -44,4 +45,4 @@ jobs:
           workflowsIds: ${{ env.WORKFLOWS_IDS }}
 
       - name: Get result
-        run: echo "${{ steps }}"
+        run: echo "${{ steps.await-action.outputs }}"
