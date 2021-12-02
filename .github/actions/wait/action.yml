@@ -61,7 +61,7 @@ runs:
             
             async function fetchWorkflowConclusion(workflowId) {
               
-              const {data} = await github.actions.listWorkflowRuns({
+              const {data} = await github.rest.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 workflow_id: workflowId,
