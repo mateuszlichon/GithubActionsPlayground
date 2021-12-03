@@ -13,13 +13,14 @@ on:
 
 env:
   WORKFLOWS_IDS: ci.yml, dispatch.yml
-  WORKFLOWS_RESULT: ${{ steps.await-action.outputs.wait-result }}
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   wait:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.await-action.outputs.wait-result }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -61,6 +62,8 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
+      - name: print output
+      - run: echo ${{needs.job1.outputs.output1}}
   deploy-else:
     name: Deploys something else
     runs-on: ubuntu-latest
