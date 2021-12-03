@@ -61,7 +61,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
       - name: print output
-        run: echo ${{needs.job1.outputs.output1}}
+        run: echo ${{needs.wait.outputs.output1}}
   deploy-else:
     name: Deploys something else
     runs-on: ubuntu-latest
