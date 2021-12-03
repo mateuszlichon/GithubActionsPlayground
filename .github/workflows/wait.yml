@@ -57,3 +57,14 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
+  deploy-else:
+    name: Deploys something else
+    runs-on: ubuntu-latest
+    needs:
+      - wait
+    steps:
+      - uses: actions/checkout@v2
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
