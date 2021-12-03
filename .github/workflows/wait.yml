@@ -57,11 +57,6 @@ jobs:
     needs:
       - wait
     steps:
-      - uses: actions/checkout@v2
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
       - name: print output
       - run: echo ${{needs.job1.outputs.output1}}
   deploy-else:
