@@ -40,7 +40,7 @@ runs:
             if (isAllWorkflowsSuccess) {
               core.info('Tra la la')
               console.log("All workflows successful");
-              console.log("Moving on to check if master...");
+              console.log("Moving on to check if master... ");
               return 'success'
             } else {
               console.log("Not all workflows ready:");
