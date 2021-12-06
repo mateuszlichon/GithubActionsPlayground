@@ -45,6 +45,7 @@ runs:
               console.log("Not all workflows ready:");
               workflowIds.forEach((workflowId) => {
                 if (!requiredWorkflowsConclusions[workflowId].status) {
+                  core.info('Output to the actions build log')
                   console.log(
                     `No workflow with id ${workflowId} matching criteria of branch and SHA`
                   );
