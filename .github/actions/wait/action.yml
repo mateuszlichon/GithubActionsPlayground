@@ -38,6 +38,7 @@ runs:
               requiredWorkflowsConclusions
             ).reduce((prev, next) => prev && next.conclusion === "success", true);
             if (isAllWorkflowsSuccess) {
+              core.info('Tra la la')
               console.log("All workflows successful");
               console.log("Moving on to check if master...");
               return 'success'
