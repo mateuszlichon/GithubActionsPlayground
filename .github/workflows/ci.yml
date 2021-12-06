@@ -40,4 +40,6 @@ jobs:
         with:
           result-encoding: string
           script: |
+            const core = require('@actions/core')
+            
             core.info('Output to the actions build log')
