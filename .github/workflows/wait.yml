@@ -40,7 +40,7 @@ jobs:
 
       - name: Checking labels
         id: label-check
-        uses: actions/github-script@v5
+        uses: actions/github-script@v4
         with:
           result-encoding: string
           script: |
@@ -50,10 +50,10 @@ jobs:
             const pullRequest = ${{ github.event.workflow_run.pull_requests[0] }}
             
             if (pullRequest) {
-              var { data } = await github.rest.pulls.get({
+              var { data } = await github.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: github.event.pull_requests[0].number,
+                pull_number: pullRequest.number,
               });
             
               console.log(data)
