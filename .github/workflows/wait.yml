@@ -49,13 +49,9 @@ jobs:
             
             const pullRequest = ${{ github.event.workflow_run.pull_requests[0] }}
             
-            var { data } = await github.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pullRequest.number,
-            });
 
-            console.log(data)
+
+            console.log(pullRequest)
             
 
       - name: Awaits
