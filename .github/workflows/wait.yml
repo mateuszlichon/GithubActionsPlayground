@@ -45,36 +45,12 @@ jobs:
           result-encoding: string
           script: |
             
-            const workflowIds = '${{ env.WORKFLOWS_IDS }}'.split(', ')
-            
-            const requiredWorkflowsConclusions = await getRequiredWorkflowsConclusions(
-              workflowIds
-            );
-            
-            const isAllWorkflowsSuccess = Object.values(
-              requiredWorkflowsConclusions
-            ).reduce((prev, next) => prev && next.conclusion === "success", true);
-            if (isAllWorkflowsSuccess) {
-              core.warning('Its a success after all.')
-              core.info('Tra la la')
-              console.log("All workflows successful");
-              console.log("Moving on to check if master...");
-              return 'success'
+            const pullRequest = ${{ github.event.workflow_run.pull_requests[0] }}
+
+            if (pullRequest) {
+              core.warning('Jest')
             } else {
-              console.log("Not all workflows ready:");
-              workflowIds.forEach((workflowId) => {
-                if (!requiredWorkflowsConclusions[workflowId].status) {
-                  core.info('Output to the actions build log')
-                  console.log(
-                    `No workflow with id ${workflowId} matching criteria of branch and SHA`
-                  );
-                } else if (requiredWorkflowsConclusions[workflowId].conclusion !== "success") {
-                  console.log(
-                    `${requiredWorkflowsConclusions[workflowId].name} status is ${requiredWorkflowsConclusions[workflowId].status} with a conclusion of ${requiredWorkflowsConclusions[workflowId].conclusion}`
-                  );
-                }
-              });
-              return 'not success'
+              core.warning('Nie ma')
             }
             
             ///// Functions implementation
