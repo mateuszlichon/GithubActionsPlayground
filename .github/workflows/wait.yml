@@ -47,7 +47,9 @@ jobs:
             console.log('github.event.pull_requests', ${{ github.event.workflow_run.pull_requests[0].number }})
             console.log(${{ toJSON(github.event.workflow_run.pull_requests[0]) }})
             
-            if (github.event.workflow_run.pull_requests[0]) {
+            const pullRequest = ${{ github.event.workflow_run.pull_requests[0] }}
+            
+            if (pullRequest) {
               var { data } = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
