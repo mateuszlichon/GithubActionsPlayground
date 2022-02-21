@@ -55,7 +55,7 @@ jobs:
                   });
       - name: Run tests
         env:
-          JOBS_TO_RERUN: ${{ steps.jobs-to-rerun-array.outputs.result }}
+          JOBS_TO_RERUN: '(something somethingElse somethingOther)'
         run: |
            for i in "${JOBS_TO_RERUN[@]}"
              do
