@@ -42,23 +42,15 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const jobsToRerun = process.env.JOBS_TO_RERUN
-#            const jobsToRerunArray = ${{fromJson(jobsToRerun)}}
-#            console.log(typeof jobsToRerunArray)
-#            const commentMessage = `Rerunning jobs: ${jobsToRerunArray.join(', ')}`
-#            await github.rest.issues.createComment({
-#                    owner: context.repo.owner,
-#                    repo: context.repo.repo,
-#                    issue_number: context.issue.number,
-#                    body: commentMessage,
-#                  });
+            const jobsToRerunArray = JSON.parse(process.env.JOBS_TO_RERUN)
+            console.log(typeof jobsToRerunArray)
+            const commentMessage = `Rerunning jobs: ${jobsToRerunArray.join(', ')}`
+            await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.issue.number,
+                    body: commentMessage,
+                  });
 
-  run-tests:
-    needs: verify-jobs
-    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        node: ${{fromJson(needs.verify-jobs.outputs.jobs-to-rerun)}}
-    steps:
-      - run: echo ${{fromJson(needs.verify-jobs.outputs.jobs-to-rerun)}}
+
 
