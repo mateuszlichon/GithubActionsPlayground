@@ -55,7 +55,7 @@ jobs:
       - name: Run tests
         env:
           JOBS_TO_RERUN: ${{ steps.jobs-to-rerun.outputs.result }}
-          run: |
+        run: |
            for i in "${JOBS_TO_RERUN[@]}"
              do
               echo "$i"
