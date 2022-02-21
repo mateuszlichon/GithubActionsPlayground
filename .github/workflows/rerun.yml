@@ -43,6 +43,6 @@ jobs:
             await github.rest.issues.createComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    issue_number: context.event.issue.number,
+                    issue_number: context.issue.number,
                     body: 'Reruning tests for sth',
                   });
