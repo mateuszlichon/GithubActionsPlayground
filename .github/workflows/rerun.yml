@@ -29,7 +29,8 @@ jobs:
           script: |
             const command = process.env.RERUN_COMMENT_TEXT
             const comment = process.env.COMMENT_BODY
-            const match = comment.match("/" + command + "(.*)/")
+            const regexObj = new RegExp(command)
+            const match = comment.match(regexObj)
             console.log('RERUN COMMAND')
             console.log(command)
             console.log(match)
