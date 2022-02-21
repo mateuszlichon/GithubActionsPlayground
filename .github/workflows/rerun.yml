@@ -11,6 +11,7 @@ jobs:
     name: Test reruns
     outputs:
       jobs-to-rerun: ${{ steps.jobs-to-rerun.outputs.result }}
+      jobs-to-rerun-array: (something somethingElse somethingOther)
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
@@ -54,7 +55,7 @@ jobs:
                   });
       - name: Run tests
         env:
-          JOBS_TO_RERUN: ${{ steps.jobs-to-rerun.outputs.result }}
+          JOBS_TO_RERUN: ${{ steps.jobs-to-rerun-array.outputs.result }}
         run: |
            for i in "${JOBS_TO_RERUN[@]}"
              do
