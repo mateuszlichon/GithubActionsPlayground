@@ -29,7 +29,7 @@ jobs:
           script: |
             const command = process.env.RERUN_COMMENT_TEXT
             const comment = process.env.COMMENT_BODY
-            const match = comment.match('/test rerun(.*)/')
+            const match = comment.match("/" + command + "(.*)/")
             console.log('RERUN COMMAND')
             console.log(command)
             console.log(match)
