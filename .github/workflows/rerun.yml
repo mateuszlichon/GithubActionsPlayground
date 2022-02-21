@@ -28,6 +28,7 @@ jobs:
           COMMENT_BODY: ${{ github.event.comment.body }}
         uses: actions/github-script@v5
         with:
+          result-encoding: string
           script: |
             const command = process.env.RERUN_COMMENT_TEXT
             const comment = process.env.COMMENT_BODY
@@ -40,6 +41,7 @@ jobs:
           JOBS_TO_RERUN: ${{ steps.jobs-to-rerun.outputs.result }}
         uses: actions/github-script@v5
         with:
+          result-encoding: string
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const jobsToRerunArray = JSON.parse(process.env.JOBS_TO_RERUN)
