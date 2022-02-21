@@ -45,7 +45,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const jobsToRerunArray = JSON.parse(process.env.JOBS_TO_RERUN)
-            const commentMessage = `Rerunning jobs: ${jobsToRerunArray.join(', ')} :runner:`
+            const commentMessage = `Rerunning jobs: ${jobsToRerunArray.join(', ')}`
             await github.rest.issues.createComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
