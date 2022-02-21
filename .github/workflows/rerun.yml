@@ -7,8 +7,10 @@ env:
   RERUN_COMMENT_TEXT: test rerun
   
 jobs:
-  check:
+  verify-jobs:
     name: Test reruns
+    outputs:
+      jobs-to-rerun: ${{ steps.jobs-to-rerun.outputs.result }}
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
@@ -30,8 +32,9 @@ jobs:
             const command = process.env.RERUN_COMMENT_TEXT
             const comment = process.env.COMMENT_BODY
             const match = comment.match(new RegExp(command + "(.*)"));
-            return match && match[1].trim().split(" ");
+            const jobsToRerun = match && match[1].trim().split(" ");
             console.log(jobsToRerun);
+            return toJSON(jobsToRerun)
       - name: Notify on reruns 
         env:
           JOBS_TO_RERUN: ${{ steps.jobs-to-rerun.outputs.result }}
@@ -39,7 +42,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const jobsToRerunArray = process.env.JOBS_TO_RERUN
+            const jobsToRerunArray = ${{fromJson(process.env.JOBS_TO_RERUN)}}
             console.log(typeof jobsToRerunArray)
 #            const commentMessage = `Rerunning jobs: ${jobsToRerunArray.join(', ')}`
 #            await github.rest.issues.createComment({
@@ -50,9 +53,11 @@ jobs:
 #                  });
 
   run-tests:
+    needs: verify-jobs
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [6, 8, 10]
+        node: ${{fromJson(needs.verify-jobs.outputs.jobs-to-rerun)}}
     steps:
       - run: echo ${{ matrix.node }}
+
