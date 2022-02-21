@@ -27,6 +27,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const command = process.env.COMMENT_BODY
+            const command = process.env.RERUN_COMMENT_TEXT
+            const comment = process.env.COMMENT_BODY
+            const regex = '/' + command + '(.*)/'
+            const match = regex.exec(comment)
             console.log('RERUN COMMAND')
             console.log(command)
+            console.log(match[1])
+
+            
