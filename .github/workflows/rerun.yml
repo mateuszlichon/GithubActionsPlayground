@@ -38,6 +38,7 @@ jobs:
             console.log(jobsToRerun);
             return JSON.stringify(jobsToRerun)
       - name: Notify on reruns 
+        id: message
         env:
           JOBS_TO_RERUN: ${{ steps.jobs-to-rerun.outputs.result }}
         uses: actions/github-script@v5
@@ -53,9 +54,10 @@ jobs:
                     issue_number: context.issue.number,
                     body: commentMessage,
                   });
+            return commentMessage
       - name: Run tests
         env:
-          JOBS_TO_RERUN: 'something, somethingElse, somethingOther'
+          JOBS_TO_RERUN: ${{ steps.message.outputs.result }}
         run: |
           IFS=', ' read -a arr <<< $JOBS_TO_RERUN
           for i in "${arr[@]}"
