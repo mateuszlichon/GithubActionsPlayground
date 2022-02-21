@@ -56,9 +56,9 @@ jobs:
   run-tests:
     needs: verify-jobs
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ${{fromJson(needs.verify-jobs.outputs.jobs-to-rerun)}}
+#    strategy:
+#      matrix:
+#        node: ${{fromJson(needs.verify-jobs.outputs.jobs-to-rerun)}}
     steps:
-      - run: echo ${{ matrix.node }}
+      - run: echo ${{fromJson(needs.verify-jobs.outputs.jobs-to-rerun)}}
 
