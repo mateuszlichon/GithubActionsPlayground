@@ -55,11 +55,12 @@ jobs:
                   });
       - name: Run tests
         env:
-          JOBS_TO_RERUN: '(something somethingElse somethingOther)'
+          JOBS_TO_RERUN: 'something, somethingElse, somethingOther'
         run: |
-           for i in "${JOBS_TO_RERUN[@]}"
-             do
-              echo "$i"
-            done
+          IFS=', ' read -a arr <<< $JOBS_TO_RERUN
+          for i in "${arr[@]}"
+          do
+            echo "$i"
+          done
 
 
