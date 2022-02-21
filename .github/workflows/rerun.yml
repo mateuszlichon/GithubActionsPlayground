@@ -11,7 +11,7 @@ jobs:
     name: Test reruns
     outputs:
       jobs-to-rerun: ${{ steps.jobs-to-rerun.outputs.result }}
-      jobs-to-rerun-array: (something somethingElse somethingOther)
+      jobs-to-rerun-array: '(something somethingElse somethingOther)'
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
