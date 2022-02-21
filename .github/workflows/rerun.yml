@@ -48,3 +48,11 @@ jobs:
 #                    issue_number: context.issue.number,
 #                    body: commentMessage,
 #                  });
+
+  run-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [6, 8, 10]
+    steps:
+      - run: echo ${{ matrix.node }}
