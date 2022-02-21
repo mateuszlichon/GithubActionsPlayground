@@ -1,0 +1,25 @@
+name: Test Rerun
+on:
+  issue_comment:
+    types: [created]
+
+env:
+  RERUN_COMMENT_TEXT: test rerun
+  
+jobs:
+  check:
+    name: Test reruns
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rerun test
+        if:
+          ${{
+            github.event_name == 'issue_comment' && github.event.issue.pull_request &&
+            startsWith(github.event.comment.body, env.RERUN_COMMENT_TEXT)
+          }}
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log('RERUN COMMAND')
+            console.log(github.event.comment.body)
