@@ -34,5 +34,6 @@ jobs:
             console.log('RERUN COMMAND')
             console.log(command)
             console.log(match)
+            console.log(match[1])
 
             
