@@ -34,7 +34,7 @@ jobs:
             const match = comment.match(new RegExp(command + "(.*)"));
             const jobsToRerun = match && match[1].trim().split(" ");
             console.log(jobsToRerun);
-            return toJSON(jobsToRerun)
+            return JSON.stringify(jobsToRerun)
       - name: Notify on reruns 
         env:
           JOBS_TO_RERUN: ${{ steps.jobs-to-rerun.outputs.result }}
