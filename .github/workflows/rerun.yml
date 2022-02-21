@@ -15,7 +15,8 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
-      - name: Rerun test
+      - name: Get jobs to rerun
+        id: jobs-to-rerun
         if:
           ${{
             github.event_name == 'issue_comment' && github.event.issue.pull_request &&
@@ -25,16 +26,15 @@ jobs:
           COMMENT_BODY: ${{ github.event.comment.body }}
         uses: actions/github-script@v5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const command = process.env.RERUN_COMMENT_TEXT
             const comment = process.env.COMMENT_BODY
-            const regexObj = new RegExp(command)
-            const match = comment.match(regexObj)
-            console.log('RERUN COMMAND')
-            console.log(command)
-            console.log(match)
-            console.log(match[1])
-
-            
-            console.log(regexObj.exec(comment))
+            const match = comment.match(new RegExp(command + "(.*)"));
+            return match && match[1].trim().split(" ");
+            console.log(jobsToRerun);
+      - name: Notify on reruns 
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log(steps.jobs-to-rerun.outputs.result);
