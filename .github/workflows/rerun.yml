@@ -14,7 +14,8 @@ jobs:
     if:
       ${{
         github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-        startsWith(github.event.comment.body, 'test rerun')
+        startsWith(github.event.comment.body, 'test rerun') &&
+        github.event.label.name == 'test-rerun'
       }}
     steps:
       - name: Dump GitHub context
