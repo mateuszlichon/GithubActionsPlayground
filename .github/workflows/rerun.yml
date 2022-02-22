@@ -94,6 +94,7 @@ jobs:
           do
             echo "$i" "$SHA" "$BRANCH"
           done
+          exit 1
 
       - name: Notify on reruns 
         if: ${{ steps.test-runs.outcome == 'success' }}
@@ -136,7 +137,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               sha: process.env.COMMENT_SHA,
-              state: process.env.STATE === 'success' ? 'success' : 'failure',
+              state: process.env.STATE,
               target_url: process.env.BUILD_URL,
               description: process.env.STATE === 'success' ? 'Command finished' : 'Command failed',
               context: process.env.COMMENT_CONTEXT,
