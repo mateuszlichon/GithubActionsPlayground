@@ -70,8 +70,8 @@ jobs:
             const jobsToRerun = process.env.JOBS_TO_RERUN
             const invalidParams = process.env.INVALID_PARAMS
             
-            const rerunningMessage = `Rerunning jobs: ${jobsToRerun.join(', ')}`
-            const invalidParamsMessage = `Something feels off about: ${invalidParams.join(', ')}. Maybe check the spelling?`
+            const rerunningMessage = `Rerunning jobs: ${jobsToRerun}`
+            const invalidParamsMessage = `Something feels off about: ${invalidParams}. Maybe check the spelling?`
             
             const messageBody = `${jobsToRerun && rerunningMessage} ${invalidParams && invalidParamsMessage}`
             
