@@ -9,9 +9,6 @@ env:
 jobs:
   verify-jobs:
     name: Test reruns
-    outputs:
-      jobs-to-rerun: ${{ steps.jobs-to-rerun.outputs.result }}
-      jobs-to-rerun-array: '(something somethingElse somethingOther)'
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
@@ -19,7 +16,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
       - name: Get jobs to rerun
-        id: jobs-to-rerun
+        id: validate-command-params
         if:
           ${{
             github.event_name == 'issue_comment' && github.event.issue.pull_request &&
@@ -31,38 +28,58 @@ jobs:
         with:
           result-encoding: string
           script: |
+            const SUPPORTED_JOBS = [
+                'something'
+              ]
+              
             const command = process.env.RERUN_COMMENT_TEXT
             const comment = process.env.COMMENT_BODY
-            const match = comment.match(new RegExp(command + "(.*)"));
-            const jobsToRerun = match && match[1].trim().split(" ");
-            console.log(jobsToRerun);
-            return JSON.stringify(jobsToRerun)
-      - name: Notify on reruns 
-        id: message
-        env:
-          JOBS_TO_RERUN: ${{ steps.jobs-to-rerun.outputs.result }}
-        uses: actions/github-script@v5
-        with:
-          result-encoding: string
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const jobsToRerunArray = JSON.parse(process.env.JOBS_TO_RERUN)
-            const commentMessage = `Rerunning jobs: ${jobsToRerunArray.join(', ')}`
-            await github.rest.issues.createComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: context.issue.number,
-                    body: commentMessage,
-                  });
-            return commentMessage
+            
+            const commandParams = comment.replace(command, "").trim().split(" ");
+            const paramsValidationObject = commandParams
+              .reduce(
+                (prev, param) =>
+                  SUPPORTED_JOBS.includes(param)
+                    ? { ...prev, ...prev.valid.push(param) }
+                    : { ...prev, ...prev.inValid.push(param) },
+                { valid: [], inValid: [] }
+              );
+              
+            core.setOutput('valid', paramsValidationObject.valid.join(", "));
+            core.setOutput('invalid', paramsValidationObject.inValid.join(", "));
+            
       - name: Run tests
         env:
-          JOBS_TO_RERUN: ${{ steps.message.outputs.result }}
+          JOBS_TO_RERUN: ${{ steps.validate-command-params.outputs.valid }}
         run: |
           IFS=', ' read -a arr <<< $JOBS_TO_RERUN
           for i in "${arr[@]}"
           do
             echo "$i"
           done
+
+      - name: Notify on reruns 
+        env:
+          JOBS_TO_RERUN: ${{ steps.validate-command-params.outputs.valid }}
+          INVALID_PARAMS: ${{ steps.validate-command-params.outputs.invalid }}
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const jobsToRerun = process.env.JOBS_TO_RERUN
+            const invalidParams = process.env.INVALID_PARAMS
+            
+            const rerunningMessage = `Rerunning jobs: ${jobsToRerunArray.join(', ')}`
+            const invalidParamsMessage = `Something feels off about: ${invalidParams.join(', ')}. Maybe check the spelling?`
+            
+            const messageBody = `${jobsToRerun && rerunningMessage} ${invalidParams && invalidParamsMessage}`
+            
+            await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.issue.number,
+                    body: messageBody,
+                  });
 
 
