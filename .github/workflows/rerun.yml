@@ -11,11 +11,11 @@ jobs:
   verify-jobs:
     name: Test reruns
     runs-on: ubuntu-latest
-    if:
-      ${{
-        github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-        startsWith(github.event.comment.body, env.RERUN_COMMENT_TEXT)
-      }}
+#     if:
+#       ${{
+#         github.event_name == 'issue_comment' && github.event.issue.pull_request &&
+#         startsWith(github.event.comment.body, env.RERUN_COMMENT_TEXT)
+#       }}
     steps:
       - name: Dump GitHub context
         env:
