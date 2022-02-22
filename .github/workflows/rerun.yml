@@ -96,7 +96,7 @@ jobs:
           done
 
       - name: Notify on reruns 
-        if: ${steps.test-runs.outputs.status == 'success'}
+        if: ${{ steps.test-runs.outputs.status == 'success' }}
         env:
           JOBS_TO_RERUN: ${{ steps.validate-command-params.outputs.valid }}
           INVALID_PARAMS: ${{ steps.validate-command-params.outputs.invalid }}
