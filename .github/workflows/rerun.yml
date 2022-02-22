@@ -73,7 +73,7 @@ jobs:
             const rerunningMessage = `Rerunning jobs: ${jobsToRerun}`
             const invalidParamsMessage = `Something feels off about: ${invalidParams}. Maybe check the spelling?`
             
-            const messageBody = `${jobsToRerun && rerunningMessage} ${invalidParams && invalidParamsMessage}`
+            const messageBody = `${jobsToRerun && rerunningMessage} 🏃 ${invalidParams && invalidParamsMessage}`
             
             await github.rest.issues.createComment({
                     owner: context.repo.owner,
