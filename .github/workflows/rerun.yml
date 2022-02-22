@@ -48,14 +48,34 @@ jobs:
             core.setOutput('valid', paramsValidationObject.valid.join(", "));
             core.setOutput('invalid', paramsValidationObject.inValid.join(", "));
             
+      - name: Get PR data
+        id: pr-data
+        env:
+          PR_API_URL: ${{ github.event.issue.pull_request.url }}
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |  
+            const { data: pr } = await github.request(process.env.PR_API_URL);
+
+            if (pr && pr.state === 'open') {
+             core.setOutput('sha', pr.head.sha);
+             core.setOutput('ref', pr.head.ref);
+            } else {
+             core.setFailed(`Active PR not found ${process.env.PR_API_URL}`);
+            }
+            
       - name: Run tests
         env:
           JOBS_TO_RERUN: ${{ steps.validate-command-params.outputs.valid }}
+          SHA: ${{ steps.pr-data.outputs.sha }}
+          BRANCH: ${{ steps.pr-data.outputs.ref }}
         run: |
           IFS=', ' read -a arr <<< $JOBS_TO_RERUN
           for i in "${arr[@]}"
           do
-            echo "$i"
+            echo "$i" "$SHA" "$BRANCH"
           done
 
       - name: Notify on reruns 
