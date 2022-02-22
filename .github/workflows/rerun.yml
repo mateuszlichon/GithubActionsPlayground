@@ -70,10 +70,14 @@ jobs:
             const jobsToRerun = process.env.JOBS_TO_RERUN
             const invalidParams = process.env.INVALID_PARAMS
             
-            const rerunningMessage = `Rerunning jobs: ${jobsToRerun}`
-            const invalidParamsMessage = `Something feels off about: ${invalidParams}. Maybe check the spelling?`
-            
-            const messageBody = `${jobsToRerun && rerunningMessage} 🏃 ${invalidParams && invalidParamsMessage}`
+            const rerunningMessage = `Rerunning jobs: ${jobsToRerun} 🏃`;
+            const invalidParamsMessage = `${
+              jobsToRerun && "\n"
+            } Something feels off about: ${invalidParams}. Maybe check the spelling? 🙈`;
+
+            const messageBody = `${jobsToRerun && rerunningMessage} ${
+              invalidParams && invalidParamsMessage
+            }`;
             
             await github.rest.issues.createComment({
                     owner: context.repo.owner,
