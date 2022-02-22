@@ -5,23 +5,57 @@ on:
 
 env:
   RERUN_COMMENT_TEXT: test rerun
+  BUILD_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
   
 jobs:
   verify-jobs:
     name: Test reruns
     runs-on: ubuntu-latest
+    if:
+      ${{
+        github.event_name == 'issue_comment' && github.event.issue.pull_request &&
+        startsWith(github.event.comment.body, env.RERUN_COMMENT_TEXT)
+      }}
     steps:
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
+      - name: Get PR data
+        id: pr-data
+        env:
+          PR_API_URL: ${{ github.event.issue.pull_request.url }}
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |  
+            const { data: pr } = await github.request(process.env.PR_API_URL);
+
+            if (pr && pr.state === 'open') {
+             core.setOutput('sha', pr.head.sha);
+             core.setOutput('ref', pr.head.ref);
+            } else {
+             core.setFailed(`Active PR not found ${process.env.PR_API_URL}`);
+            }
+      - name: Create pending status in the PR
+        uses: actions/github-script@v5
+        env:
+          COMMENT_SHA: ${{ steps.pr-data.outputs.sha }}
+          COMMENT_CONTEXT: "${{ github.workflow }} / ${{ github.event.comment.body }}"
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: process.env.COMMENT_SHA,
+              state: 'pending',
+              target_url: process.env.BUILD_URL,
+              description: 'Command started',
+              context: process.env.COMMENT_CONTEXT,
+            });
       - name: Get jobs to rerun
         id: validate-command-params
-        if:
-          ${{
-            github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-            startsWith(github.event.comment.body, env.RERUN_COMMENT_TEXT)
-          }}
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
         uses: actions/github-script@v5
@@ -48,25 +82,8 @@ jobs:
             core.setOutput('valid', paramsValidationObject.valid.join(", "));
             core.setOutput('invalid', paramsValidationObject.inValid.join(", "));
             
-      - name: Get PR data
-        id: pr-data
-        env:
-          PR_API_URL: ${{ github.event.issue.pull_request.url }}
-        uses: actions/github-script@v5
-        with:
-          result-encoding: string
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |  
-            const { data: pr } = await github.request(process.env.PR_API_URL);
-
-            if (pr && pr.state === 'open') {
-             core.setOutput('sha', pr.head.sha);
-             core.setOutput('ref', pr.head.ref);
-            } else {
-             core.setFailed(`Active PR not found ${process.env.PR_API_URL}`);
-            }
-            
       - name: Run tests
+        id: test-runs
         env:
           JOBS_TO_RERUN: ${{ steps.validate-command-params.outputs.valid }}
           SHA: ${{ steps.pr-data.outputs.sha }}
@@ -79,6 +96,7 @@ jobs:
           done
 
       - name: Notify on reruns 
+        if: ${steps.test-runs.outputs.status == 'success'}
         env:
           JOBS_TO_RERUN: ${{ steps.validate-command-params.outputs.valid }}
           INVALID_PARAMS: ${{ steps.validate-command-params.outputs.invalid }}
@@ -105,5 +123,23 @@ jobs:
                     issue_number: context.issue.number,
                     body: messageBody,
                   });
+                  
+      - name: Create result status in the PR
+        env:
+          COMMENT_SHA: ${{ steps.pr-data.outputs.sha }}
+          COMMENT_CONTEXT: "${{ github.workflow }} / ${{ github.event.comment.body }}"
+          STATE: ${{ steps.test-runs.outputs.status }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: process.env.COMMENT_SHA,
+              state: process.env.STATE,
+              target_url: process.env.BUILD_URL,
+              description: process.env.STATE === 'success' ? 'Command finished' : 'Command failed',
+              context: process.env.COMMENT_CONTEXT,
+            });
 
 
