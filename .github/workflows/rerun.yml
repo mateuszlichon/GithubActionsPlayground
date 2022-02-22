@@ -96,7 +96,7 @@ jobs:
           done
 
       - name: Notify on reruns 
-        if: ${{ steps.test-runs.outputs.status == 'success' }}
+        if: ${{ steps.test-runs.outcome == 'success' }}
         env:
           JOBS_TO_RERUN: ${{ steps.validate-command-params.outputs.valid }}
           INVALID_PARAMS: ${{ steps.validate-command-params.outputs.invalid }}
@@ -128,7 +128,7 @@ jobs:
         env:
           COMMENT_SHA: ${{ steps.pr-data.outputs.sha }}
           COMMENT_CONTEXT: "${{ github.workflow }} / ${{ github.event.comment.body }}"
-          STATE: ${{ steps.test-runs.outputs.status }}
+          STATE: ${{ steps.test-runs.outcome }}
         uses: actions/github-script@v5
         with:
           script: |
