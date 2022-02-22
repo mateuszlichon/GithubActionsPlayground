@@ -11,13 +11,13 @@ jobs:
   verify-jobs:
     name: Test reruns
     runs-on: ubuntu-latest
-    if:
-      ${{
-        github.event_name == 'issue_comment' && github.event.issue.pull_request &&
-        startsWith(github.event.comment.body, 'test rerun') &&
-        github.event.action == 'labeled' &&
-        github.event.label.name == 'test-rerun'
-      }}
+#     if:
+#       ${{
+#         github.event_name == 'issue_comment' && github.event.issue.pull_request &&
+#         startsWith(github.event.comment.body, 'test rerun') &&
+#         github.event.action == 'labeled' &&
+#         github.event.label.name == 'test-rerun'
+#       }}
     steps:
       - name: Dump GitHub context
         env:
