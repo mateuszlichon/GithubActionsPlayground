@@ -5,6 +5,7 @@ on:
 
 env:
   RERUN_COMMENT_TEXT: test rerun
+  TEST_LABEL: test-rerun
   BUILD_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
   
 jobs:
@@ -16,9 +17,6 @@ jobs:
         github.event_name == 'issue_comment' && github.event.issue.pull_request &&
         startsWith(github.event.comment.body, 'test rerun')
       }}
-#         github.event.action == 'labeled' &&
-#         github.event.label.name == 'test-rerun'
-#       }}
     steps:
       - name: Dump GitHub context
         env:
@@ -33,9 +31,10 @@ jobs:
           result-encoding: string
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |  
+            const testLabel = process.env.TEST_LABEL
             const { data: pr } = await github.request(process.env.PR_API_URL);
             
-            console.log(pr)
+            core.setOutput('isLabeled', pr.labels.includes('test-rerun'));
 
             if (pr && pr.state === 'open') {
              core.setOutput('sha', pr.head.sha);
@@ -43,6 +42,11 @@ jobs:
             } else {
              core.setFailed(`Active PR not found ${process.env.PR_API_URL}`);
             }
+            
+            if (!pr.labels.includes('test-rerun')) {
+              core.setFailed(`${testLabel} not enabled`);
+            }
+            
       - name: Create pending status in the PR
         uses: actions/github-script@v5
         env:
@@ -59,6 +63,7 @@ jobs:
               description: 'Command started',
               context: process.env.COMMENT_CONTEXT,
             });
+            
       - name: Get jobs to rerun
         id: validate-command-params
         env:
