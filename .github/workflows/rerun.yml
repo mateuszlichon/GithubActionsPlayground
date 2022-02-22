@@ -89,12 +89,13 @@ jobs:
           SHA: ${{ steps.pr-data.outputs.sha }}
           BRANCH: ${{ steps.pr-data.outputs.ref }}
         run: |
+          [ -z "$var" ] && return 1
+        
           IFS=', ' read -a arr <<< $JOBS_TO_RERUN
           for i in "${arr[@]}"
           do
             echo "$i" "$SHA" "$BRANCH"
           done
-          exit 1
 
       - name: Notify on reruns 
         if: ${{ steps.test-runs.outcome == 'success' }}
@@ -126,6 +127,7 @@ jobs:
                   });
                   
       - name: Create result status in the PR
+        if: always()
         env:
           COMMENT_SHA: ${{ steps.pr-data.outputs.sha }}
           COMMENT_CONTEXT: "${{ github.workflow }} / ${{ github.event.comment.body }}"
